@@ -15,7 +15,7 @@ module.exports = appInfo => {
   config.session_secret = 'egg_elm';
 
   // add your config here
-  config.middleware = [];
+  config.middleware = [ 'errorHandler' ];
 
   /**
    * @see http://mongodb.github.io/node-mongodb-native/2.2/api/Db.html#createCollection
