@@ -5,5 +5,6 @@
  */
 module.exports = app => {
   const { router, controller } = app;
+  require('./router/admin')(app);
   router.get('/', controller.home.index);
 };
