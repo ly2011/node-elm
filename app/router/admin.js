@@ -9,10 +9,10 @@ module.exports = app => {
   // const pagination = middleware.pagination();
 
   // 管理员
-  apiRouter.all('/login', admin.login); // 登录
+  apiRouter.post('/login', admin.login); // 登录
   apiRouter.post('/register', admin.register); // 注册
-  apiRouter.all('/singout', admin.singout); // 登出
-  // apiRouter.get('/info', admin.info); // 获取用户信息
+  apiRouter.get('/singout', admin.singout); // 登出
+  apiRouter.get('/info', admin.getAdminInfo); // 获取用户信息
   apiRouter.get('/all', admin.getAllAdmin); // 管理员列表
-  // apiRouter.get('/count', admin.count); // 管理员数量
+  apiRouter.get('/count', admin.getAdminCount); // 管理员数量
 };

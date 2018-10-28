@@ -62,6 +62,27 @@ class AdminService extends Service {
       .exec();
     return allAdmin;
   }
+
+  /**
+   * 获取关键词能搜索到的管理员数量
+   * @param {String} query 搜索关键词
+   */
+  async getAdminCount(query) {
+    const count = this.ctx.model.Admin.Admin.count(query).exec();
+    return count;
+  }
+
+  /**
+   * 获取管理员信息
+   * @param {String} id 管理员ID
+   */
+  async getAdminInfo(id) {
+    const query = {
+      _id: id,
+    };
+    const info = this.ctx.model.Admin.Admin.findOne(query, '-_id -__v -password').exec();
+    return info;
+  }
 }
 
 module.exports = AdminService;

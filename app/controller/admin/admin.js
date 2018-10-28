@@ -120,17 +120,73 @@ class AdminController extends Controller {
   async getAllAdmin() {
     const { ctx, service } = this;
     try {
-      const users = await service.admin.admin.getAllAdmin();
+      const allAdmin = await service.admin.admin.getAllAdmin();
       ctx.status = 200;
       ctx.body = {
         success: true,
-        data: users,
+        data: allAdmin,
+        error_msg: '获取管理员列表成功',
       };
     } catch (error) {
       ctx.status = 401;
       ctx.body = {
         success: false,
-        error_msg: '查询失败',
+        error_msg: '获取管理员列表失败',
+      };
+    }
+  }
+  async getAdminCount() {
+    const { ctx, service } = this;
+    try {
+      const count = await service.admin.admin.getAdminCount();
+      ctx.status = 200;
+      ctx.body = {
+        success: true,
+        count,
+        error_msg: '获取管理员数量成功',
+      };
+    } catch (error) {
+      ctx.status = 401;
+      ctx.body = {
+        success: false,
+        error_msg: '获取管理员数量失败',
+      };
+    }
+  }
+  async getAdminInfo() {
+    const { ctx, service } = this;
+    const admin_id = ctx.session.admin_id;
+    console.log('getAdminInfo: ', ctx.session);
+
+    if (!admin_id) {
+      ctx.status = 401;
+      ctx.body = {
+        success: false,
+        error_msg: '获取管理员信息失败',
+      };
+      return;
+    }
+    try {
+      const info = await service.admin.admin.getAdminInfo(admin_id);
+      if (!info) {
+        ctx.status = 401;
+        ctx.body = {
+          success: false,
+          error_msg: '未找到当前管理员',
+        };
+        return;
+      }
+      ctx.status = 200;
+      ctx.body = {
+        success: true,
+        data: info,
+        error_msg: '获取管理员信息成功',
+      };
+    } catch (error) {
+      ctx.status = 401;
+      ctx.body = {
+        success: false,
+        error_msg: '获取管理员信息失败',
       };
     }
   }
