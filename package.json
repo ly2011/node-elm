@@ -1,7 +1,7 @@
 {
   "name": "node-elm",
   "version": "1.0.0",
-  "description": "",
+  "description": "基于 node.js + Mongodb 构建的后台系统",
   "private": true,
   "dependencies": {
     "@types/egg": "^1.5.0",
