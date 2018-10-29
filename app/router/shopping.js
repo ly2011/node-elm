@@ -12,10 +12,10 @@ module.exports = app => {
   // 店铺
   apiRouter.post('/addShop', authUser, shop.addShop); // 添加商铺
   apiRouter.get('/restaurants', shop.getRestaurants); // 获取餐馆列表
-  // apiRouter.get('/restaurant/:id', shop.shop.getRestaurantDetail); // 获取餐馆详细信息
-  // apiRouter.delete('/restaurant/:id', authUser, shop.deleteRestaurant); // 删除餐馆
-  // apiRouter.get('/restaurants/count', shop.getShopCount); // 获取餐馆数量
-  // apiRouter.post('/updateshop', authUser, shop.updateShop); // 更新餐馆信息
+  apiRouter.get('/restaurant/:id', shop.getRestaurantDetail); // 获取餐馆详细信息
+  apiRouter.delete('/restaurant/:id', authUser, shop.deleteRestaurant); // 删除餐馆
+  apiRouter.get('/restaurants/count', shop.getShopCount); // 获取餐馆数量
+  apiRouter.post('/updateshop', authUser, shop.updateShop); // 更新餐馆信息
 
   // 店铺食品种类
   apiRouter.get('/getCategory/:id', category.findById); // 获取当前店铺食品种类

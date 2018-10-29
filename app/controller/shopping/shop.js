@@ -138,6 +138,130 @@ class ShopController extends Controller {
       };
     }
   }
+  async getRestaurantDetail() {
+    const { ctx, service } = this;
+    const id = ctx.params.id;
+    if (!id) {
+      ctx.status = 401;
+      ctx.body = {
+        success: false,
+        error_msg: '餐馆ID参数错误',
+      };
+      return;
+    }
+    try {
+      const restaurant = await service.shopping.shop.getRestaurantDetail();
+      ctx.status = 200;
+      ctx.body = {
+        success: true,
+        data: restaurant,
+        error_msg: '获取餐馆详情成功',
+      };
+    } catch (error) {
+      ctx.status = 401;
+      ctx.body = {
+        success: false,
+        error_msg: '获取餐馆详情失败',
+      };
+    }
+  }
+  async getShopCount() {
+    const { ctx, service } = this;
+    try {
+      const count = await service.shopping.shop.getShopCount();
+      ctx.status = 401;
+      ctx.body = {
+        success: true,
+        data: count,
+        error_msg: '获取餐馆数量成功',
+      };
+    } catch (error) {
+      ctx.status = 200;
+      ctx.body = {
+        success: false,
+        error_msg: '获取餐馆数量失败',
+      };
+    }
+  }
+  async updateShop() {
+    const { ctx, service } = this;
+    const { name, address, description = '', phone, category, id, latitude, longitude, image_path } = ctx.request.body;
+    try {
+      if (!name) {
+        throw new Error('餐馆名称错误');
+      } else if (!address) {
+        throw new Error('餐馆地址错误');
+      } else if (!phone) {
+        throw new Error('餐馆联系电话错误');
+      } else if (!image_path) {
+        throw new Error('餐馆图片地址错误');
+      } else if (!category) {
+        throw new Error('餐馆分类错误');
+      } else if (!id) {
+        throw new Error('餐馆ID错误');
+      }
+    } catch (err) {
+      ctx.status = 401;
+      ctx.body = {
+        success: false,
+        error_msg: err.message,
+      };
+      return;
+    }
+    const newData = {
+      name,
+      address,
+      description,
+      phone,
+      category,
+      image_path,
+    };
+    if (latitude && longitude) {
+      newData.latitude = latitude;
+      newData.longitude = longitude;
+    }
+    try {
+      await service.shopping.shop.updateShop(newData);
+      ctx.status = 200;
+      ctx.body = {
+        success: true,
+        error_msg: '修改餐馆信息成功',
+      };
+    } catch (error) {
+      ctx.status = 200;
+      ctx.body = {
+        success: false,
+        error_msg: '修改餐馆信息失败',
+      };
+    }
+  }
+
+  async deleteRestaurant() {
+    const {ctx, service} = this
+    const {id} = ctx.params
+    if (!id) {
+      ctx.status = 401
+      ctx.body = {
+        success: false,
+        error_msg: '餐馆ID参数错误'
+      }
+      return
+    }
+    try {
+      await service.shopping.shop.deleteShop(id)
+      ctx.status = 200
+      ctx.body = {
+        success: true,
+        error_msg: '删除餐馆成功'
+      }
+    } catch (error) {
+      ctx.status = 401
+      ctx.body = {
+        success: false,
+        error_msg: '删除餐馆失败'
+      }
+    }
+  }
 }
 
 module.exports = ShopController;

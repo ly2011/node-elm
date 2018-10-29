@@ -37,6 +37,42 @@ class ShopService extends Service {
       .exec();
     return shops;
   }
+  /**
+   * 获取餐馆
+   * @param {String} id 餐馆ID
+   */
+  async getRestaurantDetail(id) {
+    const query = {
+      _id: id,
+    };
+    const info = this.ctx.model.Shopping.Shop.findOne(query).exec();
+    return info;
+  }
+  /**
+   * 获取餐馆数量
+   * @return {Promise}
+   */
+  async getShopCount() {
+    return this.ctx.model.Shopping.Shop.count().exec();
+  }
+  /**
+   *
+   * @param {String} id 餐馆id
+   * @param {Object} params 餐馆参数
+   */
+  async updateShop(id, params = {}) {
+    return this.ctx.model.Shopping.Shop.findOneAndUpdate({ id }, { $set: params });
+  }
+  /**
+   *
+   * @param {String} id
+   */
+  async deleteShop(id) {
+    const query = {
+      _id: id,
+    };
+    return this.ctx.model.Shopping.Shop.remove(query);
+  }
 }
 
 module.exports = ShopService;
