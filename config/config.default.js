@@ -1,4 +1,5 @@
 'use strict';
+const path = require('path');
 
 module.exports = appInfo => {
   const config = (exports = {});
@@ -55,6 +56,22 @@ module.exports = appInfo => {
     //   depth: 50,
     //   parameterLimit: 100000,
     // }
+  };
+
+  // 下面两个配置都是文件上传的配置
+  config.qn_access = {
+    accessKey: 'Ep714TDrVhrhZzV2VJJxDYgGHBAX-KmU1xV1SQdS',
+    secretKey: 'XNIW2dNffPBdaAhvm9dadBlJ-H6yyCTIJLxNM_N6',
+    bucket: 'node-elm',
+    origin: '//elm.cangdu.org/img/',
+    uploadURL: '',
+  };
+
+  // 文件上传配置
+  // 注：如果填写 qn_access，则会上传到 7牛，以下配置无效
+  config.upload = {
+    path: path.join(__dirname, '../app/public/upload/'),
+    url: '/public/upload/',
   };
 
   config.default_page = 1;

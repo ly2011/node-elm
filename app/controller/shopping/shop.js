@@ -1,6 +1,10 @@
 'use strict';
 
 const Controller = require('egg').Controller;
+const path = require('path');
+const fs = require('fs');
+const uuidv1 = require('uuid/v1');
+const awaitWriteStream = require('await-stream-ready').write;
 
 class ShopController extends Controller {
   async addShop() {
@@ -237,28 +241,63 @@ class ShopController extends Controller {
   }
 
   async deleteRestaurant() {
-    const {ctx, service} = this
-    const {id} = ctx.params
+    const { ctx, service } = this;
+    const { id } = ctx.params;
     if (!id) {
-      ctx.status = 401
+      ctx.status = 401;
       ctx.body = {
         success: false,
-        error_msg: '餐馆ID参数错误'
-      }
-      return
+        error_msg: '餐馆ID参数错误',
+      };
+      return;
     }
     try {
-      await service.shopping.shop.deleteShop(id)
-      ctx.status = 200
+      await service.shopping.shop.deleteShop(id);
+      ctx.status = 200;
       ctx.body = {
         success: true,
-        error_msg: '删除餐馆成功'
-      }
+        error_msg: '删除餐馆成功',
+      };
     } catch (error) {
-      ctx.status = 401
+      ctx.status = 401;
       ctx.body = {
         success: false,
-        error_msg: '删除餐馆失败'
+        error_msg: '删除餐馆失败',
+      };
+    }
+  }
+
+  /**
+   * 上传文件
+   */
+  async upload() {
+    const { ctx, config, service } = this;
+    const uid = uuidv1();
+    const stream = await ctx.getFileStream();
+    const filename = uid + path.extname(stream.filename).toLowerCase();
+
+    // 如果有七牛云的配置，优先上传七牛云
+    if (config.qn_access && config.qn_access.secretKey) {
+      try {
+        const result = await service.shopping.shop.qnUpload(stream, filename);
+        ctx.body = {
+          success: true,
+          url: config.qn_access.origin + '/' + result.key,
+        };
+      } catch (err) {
+        throw err;
+      }
+    } else {
+      const target = path.join(config.upload.path, filename);
+      const writeStream = fs.createWriteStream(target);
+      try {
+        await awaitWriteStream(stream.pipe(writeStream));
+        ctx.body = {
+          success: true,
+          url: config.upload.url + filename,
+        };
+      } catch (err) {
+        throw err;
       }
     }
   }

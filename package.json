@@ -7,13 +7,19 @@
     "@types/egg": "^1.5.0",
     "@types/mongoose": "^5.2.20",
     "@types/node": "^10.12.0",
+    "await-stream-ready": "^1.0.1",
+    "captchapng": "^0.0.1",
     "dayjs": "^1.7.7",
     "egg": "^2.2.1",
     "egg-cors": "^2.1.1",
     "egg-mongoose": "^3.1.0",
     "egg-router-plus": "^1.3.0",
     "egg-scripts": "^2.5.0",
-    "egg-validate": "^2.0.2"
+    "egg-validate": "^2.0.2",
+    "formidable": "^1.2.1",
+    "gm": "^1.23.1",
+    "qiniu": "^7.2.1",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "autod": "^3.0.1",
