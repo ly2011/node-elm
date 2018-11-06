@@ -15,7 +15,7 @@ module.exports = app => {
   // apiRouter.get('/restaurant/:id', shop.getRestaurantDetail); // 获取餐馆详细信息 (不知道是什么原因导致覆盖掉 `restaurant/category` 这个路由了)
   apiRouter.delete('/restaurant/:id', authUser, shop.deleteRestaurant); // 删除餐馆
   apiRouter.get('/restaurants/count', shop.getShopCount); // 获取餐馆数量
-  apiRouter.post('/updateshop', authUser, shop.updateShop); // 更新餐馆信息
+  apiRouter.post('/updateShop', authUser, shop.updateShop); // 更新餐馆信息
   apiRouter.post('/addImg', authUser, shop.upload); // 上传图片
 
   // 店铺食品种类

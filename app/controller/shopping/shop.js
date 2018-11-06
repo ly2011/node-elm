@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const uuidv1 = require('uuid/v1');
 const awaitWriteStream = require('await-stream-ready').write;
+const sendToWormhole = require('stream-wormhole');
 
 class ShopController extends Controller {
   async addShop() {
@@ -188,6 +189,7 @@ class ShopController extends Controller {
     }
   }
   async updateShop() {
+    console.log('updateShop');
     const { ctx, service } = this;
     const { name, address, description = '', phone, category, id, latitude, longitude, image_path } = ctx.request.body;
     try {
@@ -225,13 +227,14 @@ class ShopController extends Controller {
       newData.longitude = longitude;
     }
     try {
-      await service.shopping.shop.updateShop(newData);
+      await service.shopping.shop.updateShop(id, newData);
       ctx.status = 200;
       ctx.body = {
         success: true,
         error_msg: '修改餐馆信息成功',
       };
     } catch (error) {
+      console.log('修改餐馆信息失败: ', error);
       ctx.status = 200;
       ctx.body = {
         success: false,
@@ -285,6 +288,7 @@ class ShopController extends Controller {
           url: config.qn_access.origin + '/' + result.key,
         };
       } catch (err) {
+        await sendToWormhole(stream);
         throw err;
       }
     } else {
@@ -297,6 +301,7 @@ class ShopController extends Controller {
           url: config.upload.url + filename,
         };
       } catch (err) {
+        await sendToWormhole(stream);
         throw err;
       }
     }

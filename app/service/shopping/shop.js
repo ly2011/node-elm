@@ -31,7 +31,7 @@ class ShopService extends Service {
       name: new RegExp(name, 'i'),
     };
     const shops = this.ctx.model.Shopping.Shop
-      .find(query, 'name address description phone rating status')
+      .find(query, '_id name address description phone rating status category image_path')
       .sort({ _id: -1 })
       .skip(Number(offset))
       .limit(Number(limit))
@@ -62,7 +62,7 @@ class ShopService extends Service {
    * @param {Object} params 餐馆参数
    */
   async updateShop(id, params = {}) {
-    return this.ctx.model.Shopping.Shop.findOneAndUpdate({ id }, { $set: params });
+    return this.ctx.model.Shopping.Shop.findOneAndUpdate({ _id: id }, { $set: params });
   }
   /**
    *
@@ -83,9 +83,10 @@ class ShopService extends Service {
    */
   qnUpload(readableStream, key) {
     const { accessKey, secretKey, bucket } = this.config.qn_access;
-
+    const hashName = (new Date().getTime() + Math.ceil(Math.random() * 10000)).toString(16);
+    const hashKey = hashName + 'jpg';
     const mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
-    const putPolicy = new qiniu.rs.PutPolicy({ scope: bucket });
+    const putPolicy = new qiniu.rs.PutPolicy({ scope: bucket + ':' + hashKey });
     const uploadToken = putPolicy.uploadToken(mac);
 
     const config = new qiniu.conf.Config();

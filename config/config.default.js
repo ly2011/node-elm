@@ -60,11 +60,11 @@ module.exports = appInfo => {
 
   // 下面两个配置都是文件上传的配置
   config.qn_access = {
-    accessKey: 'Ep714TDrVhrhZzV2VJJxDYgGHBAX-KmU1xV1SQdS',
-    secretKey: 'XNIW2dNffPBdaAhvm9dadBlJ-H6yyCTIJLxNM_N6',
-    bucket: 'node-elm',
-    origin: '//elm.cangdu.org/img/',
-    uploadURL: '',
+    // accessKey: 'Ep714TDrVhrhZzV2VJJxDYgGHBAX-KmU1xV1SQdS',
+    // secretKey: 'XNIW2dNffPBdaAhvm9dadBlJ-H6yyCTIJLxNM_N6',
+    // bucket: 'node-elm',
+    // origin: '//elm.cangdu.org/img/',
+    // uploadURL: '',
   };
 
   // 文件上传配置
