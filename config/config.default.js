@@ -74,6 +74,17 @@ module.exports = appInfo => {
     url: '/public/upload/',
   };
 
+  config.tencent_map = {
+    tencentkey: 'RLHBZ-WMPRP-Q3JDS-V2IQA-JNRFH-EJBHL',
+    tencentkey2: 'RRXBZ-WC6KF-ZQSJT-N2QU7-T5QIT-6KF5X',
+    tencentkey3: 'OHTBZ-7IFRG-JG2QF-IHFUK-XTTK6-VXFBN',
+  };
+
+  config.baidu_map = {
+    baidukey: 'fjke3YUipM9N64GdOIh1DNeK2APO2WcT',
+    baidukey2: 'fjke3YUipM9N64GdOIh1DNeK2APO2WcT',
+  };
+
   config.default_page = 1;
   config.default_limit = 20;
 

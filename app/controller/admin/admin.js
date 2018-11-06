@@ -13,35 +13,55 @@ class AdminController extends Controller {
       // status: { type: 'number' },
     };
     // 校验参数
-    ctx.validate(createRule);
-    const { user_name, password, status = 1 } = ctx.request.body;
+    // ctx.validate(createRule);
+    // eslint-disable-next-line
+    const { user_name, password, status = 1 } = ctx.request.body
+    if (!user_name) {
+      ctx.status = 401;
+      ctx.body = {
+        success: false,
+        error_msg: '用户名错误',
+      };
+      return;
+    }
+    if (!password) {
+      ctx.status = 401;
+      ctx.body = {
+        success: false,
+        error_msg: '密码错误',
+      };
+      return;
+    }
     const newpassword = this._encryption(password);
     try {
       const admin = await ctx.service.admin.admin.getAdminByName(user_name);
       console.log('admin: ', admin);
       if (!admin) {
-        const adminTip = status === 1 ? '管理员' : '超级管理员';
-        const newAdmin = {
-          user_name,
-          password: newpassword,
-          create_time: dayjs().format('YYYY-MM-DD'),
-          admin: adminTip,
-          status,
-          city: '',
-        };
-        // console.log('newAdmin: ', newAdmin);
-
-        await ctx.service.admin.admin.newAndSave(newAdmin);
-        ctx.status = 200;
+        // const adminTip = status === 1 ? '管理员' : '超级管理员';
+        // const newAdmin = {
+        //   user_name,
+        //   password: newpassword,
+        //   create_time: dayjs().format('YYYY-MM-DD'),
+        //   admin: adminTip,
+        //   status,
+        //   city: '',
+        // };
+        // await ctx.service.admin.admin.newAndSave(newAdmin);
+        // ctx.status = 200;
+        // ctx.body = {
+        //   success: true,
+        //   error_msg: '注册管理员成功',
+        // };
+        ctx.status = 401;
         ctx.body = {
-          success: true,
-          error_msg: '注册管理员成功',
+          success: false,
+          error_msg: '您还没注册，请到注册页面注册再登录',
         };
       } else if (newpassword.toString() !== admin.password.toString()) {
         ctx.status = 401;
         ctx.body = {
           success: false,
-          error_msg: '改用户已存在，密码输入错误',
+          error_msg: '该用户已存在，密码输入错误',
         };
       } else {
         ctx.session.admin_id = admin._id;
@@ -67,21 +87,38 @@ class AdminController extends Controller {
       // status: { type: 'number' },
     };
     // 校验参数
-    ctx.validate(createRule);
+    // ctx.validate(createRule);
     const { user_name, password, status = 1 } = ctx.request.body;
+    if (!user_name) {
+      ctx.status = 401;
+      ctx.body = {
+        success: false,
+        error_msg: '用户名错误',
+      };
+      return;
+    }
+    if (!password) {
+      ctx.status = 401;
+      ctx.body = {
+        success: false,
+        error_msg: '密码错误',
+      };
+      return;
+    }
     try {
       const admin = await ctx.service.admin.admin.getAdminByName(user_name);
       if (admin) {
-        ctx.status = 401;
+        ctx.status = 200;
         ctx.body = {
-          success: false,
-          error_msg: '该用户已经存在',
+          success: true,
+          error_msg: '该用户已经存在,请去登录页面登录',
         };
       } else {
         const adminTip = status === 1 ? '管理员' : '超级管理员';
         const newpassword = this._encryption(password);
         const newAdmin = {
           user_name,
+          password: newpassword,
           create_time: dayjs().format('YYYY-MM-DD'),
           admin: adminTip,
           status,
@@ -90,6 +127,7 @@ class AdminController extends Controller {
         ctx.status = 200;
         ctx.body = {
           success: true,
+          error_msg: '注册管理员成功',
         };
       }
     } catch (error) {

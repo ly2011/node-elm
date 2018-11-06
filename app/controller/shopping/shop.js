@@ -43,7 +43,7 @@ class ShopController extends Controller {
         throw new Error('必须上传食品种类');
       }
     } catch (err) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
         error_msg: err.message,
@@ -53,7 +53,7 @@ class ShopController extends Controller {
     try {
       const exists = await service.shopping.shop.getShopByName(name);
       if (exists) {
-        ctx.status = 401;
+        ctx.status = 200;
         ctx.body = {
           success: false,
           message: '店铺已存在，请尝试其他店铺名称',
@@ -114,7 +114,7 @@ class ShopController extends Controller {
         error_msg: '添加餐厅成功',
       };
     } catch (error) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
         error_msg: '添加商铺失败',
@@ -135,7 +135,7 @@ class ShopController extends Controller {
         error_msg: '获取店铺列表数据成功',
       };
     } catch (error) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
         error_msg: '获取店铺列表失败',
@@ -146,7 +146,7 @@ class ShopController extends Controller {
     const { ctx, service } = this;
     const id = ctx.params.id;
     if (!id) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
         error_msg: '餐馆ID参数错误',
@@ -162,7 +162,7 @@ class ShopController extends Controller {
         error_msg: '获取餐馆详情成功',
       };
     } catch (error) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
         error_msg: '获取餐馆详情失败',
@@ -173,7 +173,7 @@ class ShopController extends Controller {
     const { ctx, service } = this;
     try {
       const count = await service.shopping.shop.getShopCount();
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: true,
         data: count,
@@ -205,7 +205,7 @@ class ShopController extends Controller {
         throw new Error('餐馆ID错误');
       }
     } catch (err) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
         error_msg: err.message,
@@ -244,7 +244,7 @@ class ShopController extends Controller {
     const { ctx, service } = this;
     const { id } = ctx.params;
     if (!id) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
         error_msg: '餐馆ID参数错误',
@@ -259,7 +259,7 @@ class ShopController extends Controller {
         error_msg: '删除餐馆成功',
       };
     } catch (error) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
         error_msg: '删除餐馆失败',
