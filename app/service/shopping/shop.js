@@ -26,7 +26,7 @@ class ShopService extends Service {
    * @param {Number} offset 偏移量
    * @param {Number} limit 每页显示条数
    */
-  async getRestaurants(name = '', offset = 0, limit = 20) {
+  async getRestaurants(name = '', offset = 0, limit = 10) {
     const query = {
       name: new RegExp(name, 'i'),
     };

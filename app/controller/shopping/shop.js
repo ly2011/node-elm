@@ -29,6 +29,7 @@ class ShopController extends Controller {
       business_license_image = '',
       catering_service_license_image = '',
     } = ctx.request.body;
+    console.log('addShop: ', name, category, latitude, longitude);
     try {
       if (!name) {
         throw new Error('必须填写商店名称');
@@ -36,14 +37,16 @@ class ShopController extends Controller {
         throw new Error('必须填写商店地址');
       } else if (!phone) {
         throw new Error('必须填写联系电话');
-      } else if (!latitude || !longitude) {
-        throw new Error('商店位置信息错误');
       } else if (!image_path) {
-        throw new Error('必须上传商铺图片');
+        // else if (!latitude || !longitude) {
+        //   throw new Error('商店位置信息错误');
+        // }
+        // throw new Error('必须上传商铺图片');
       } else if (!category) {
         throw new Error('必须上传食品种类');
       }
     } catch (err) {
+      console.log('失败： ', err.message);
       ctx.status = 200;
       ctx.body = {
         success: false,
@@ -53,13 +56,16 @@ class ShopController extends Controller {
     }
     try {
       const exists = await service.shopping.shop.getShopByName(name);
+      // console.log('exists: ', exists);
       if (exists) {
+        console.log('店铺已存在，请尝试其他店铺名称');
         ctx.status = 200;
         ctx.body = {
           success: false,
           message: '店铺已存在，请尝试其他店铺名称',
         };
         return;
+        // throw new Error('店铺已存在，请尝试其他店铺名称');
       }
       const opening_hours = startTime && endTime ? startTime + '/' + endTime : '8:30/20:30';
       const newShop = {
@@ -72,7 +78,7 @@ class ShopController extends Controller {
         is_new,
         latitude,
         longitude,
-        location: [ longitude, latitude ],
+        // location: [ longitude, latitude ],
         opening_hours: [ opening_hours ],
         phone,
         promotion_info,
@@ -115,6 +121,7 @@ class ShopController extends Controller {
         error_msg: '添加餐厅成功',
       };
     } catch (error) {
+      console.log('添加失败：', error);
       ctx.status = 200;
       ctx.body = {
         success: false,
@@ -126,9 +133,10 @@ class ShopController extends Controller {
   async getRestaurants() {
     // eslint-disable-next-line
     const { ctx, service } = this
-    const { offset = 0, limit = 0, name } = ctx.query;
+    const { currentPage = 1, pageSize = 10, name } = ctx.query;
+    const offset = (currentPage - 1) * pageSize;
     try {
-      const shops = await service.shopping.shop.getRestaurants(name, offset, limit);
+      const shops = await service.shopping.shop.getRestaurants(name, offset, pageSize);
       ctx.status = 200;
       ctx.body = {
         success: true,

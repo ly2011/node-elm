@@ -17,7 +17,7 @@ class AdminController extends Controller {
     // eslint-disable-next-line
     const { user_name, password, status = 1 } = ctx.request.body
     if (!user_name) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
         error_msg: '用户名错误',
@@ -25,7 +25,7 @@ class AdminController extends Controller {
       return;
     }
     if (!password) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
         error_msg: '密码错误',
@@ -52,13 +52,13 @@ class AdminController extends Controller {
         //   success: true,
         //   error_msg: '注册管理员成功',
         // };
-        ctx.status = 401;
+        ctx.status = 200;
         ctx.body = {
           success: false,
           error_msg: '您还没注册，请到注册页面注册再登录',
         };
       } else if (newpassword.toString() !== admin.password.toString()) {
-        ctx.status = 401;
+        ctx.status = 200;
         ctx.body = {
           success: false,
           error_msg: '该用户已存在，密码输入错误',
@@ -72,7 +72,7 @@ class AdminController extends Controller {
         };
       }
     } catch (error) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
         error_msg: '登录管理员失败',
@@ -90,7 +90,7 @@ class AdminController extends Controller {
     // ctx.validate(createRule);
     const { user_name, password, status = 1 } = ctx.request.body;
     if (!user_name) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
         error_msg: '用户名错误',
@@ -98,7 +98,7 @@ class AdminController extends Controller {
       return;
     }
     if (!password) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
         error_msg: '密码错误',
@@ -131,7 +131,7 @@ class AdminController extends Controller {
         };
       }
     } catch (error) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
         error_msg: '注册管理员失败',
@@ -148,7 +148,7 @@ class AdminController extends Controller {
         error_msg: '退出成功',
       };
     } catch (error) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
         error_msg: '退出失败',
@@ -157,8 +157,10 @@ class AdminController extends Controller {
   }
   async getAllAdmin() {
     const { ctx, service } = this;
+    const { currentPage = 1, pageSize = 10 } = ctx.query;
+    const offset = (currentPage - 1) * pageSize;
     try {
-      const allAdmin = await service.admin.admin.getAllAdmin();
+      const allAdmin = await service.admin.admin.getAllAdmin(offset, pageSize);
       ctx.status = 200;
       ctx.body = {
         success: true,
@@ -166,7 +168,7 @@ class AdminController extends Controller {
         error_msg: '获取管理员列表成功',
       };
     } catch (error) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
         error_msg: '获取管理员列表失败',
@@ -180,11 +182,11 @@ class AdminController extends Controller {
       ctx.status = 200;
       ctx.body = {
         success: true,
-        count,
+        data: count,
         error_msg: '获取管理员数量成功',
       };
     } catch (error) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
         error_msg: '获取管理员数量失败',
@@ -197,7 +199,7 @@ class AdminController extends Controller {
     console.log('getAdminInfo: ', ctx.session);
 
     if (!admin_id) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
         error_msg: '获取管理员信息失败',
@@ -207,7 +209,7 @@ class AdminController extends Controller {
     try {
       const info = await service.admin.admin.getAdminInfo(admin_id);
       if (!info) {
-        ctx.status = 401;
+        ctx.status = 200;
         ctx.body = {
           success: false,
           error_msg: '未找到当前管理员',
@@ -221,7 +223,7 @@ class AdminController extends Controller {
         error_msg: '获取管理员信息成功',
       };
     } catch (error) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
         error_msg: '获取管理员信息失败',

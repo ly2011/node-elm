@@ -53,7 +53,7 @@ class AdminService extends Service {
    * @param {Number} offset 偏移量
    * @param {Number} limit 每页显示条数
    */
-  async getAllAdmin(offset = 0, limit = 20) {
+  async getAllAdmin(offset = 0, limit = 10) {
     const allAdmin = this.ctx.model.Admin.Admin
       .find({}, '-password')
       .sort({ _id: -1 })
