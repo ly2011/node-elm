@@ -29,7 +29,7 @@ class ShopController extends Controller {
       business_license_image = '',
       catering_service_license_image = ''
     } = ctx.request.body
-    console.log('addShop: ', name, category, latitude, longitude)
+    // console.log('addShop: ', name, category, latitude, longitude)
     try {
       if (!name) {
         throw new Error('必须填写商店名称')
@@ -77,7 +77,7 @@ class ShopController extends Controller {
         is_new,
         latitude,
         longitude,
-        // location: [ longitude, latitude ],
+        location: [longitude, latitude],
         opening_hours: [opening_hours],
         phone,
         promotion_info,
@@ -179,8 +179,9 @@ class ShopController extends Controller {
   }
   async getShopCount() {
     const { ctx, service } = this
+    const params = ctx.query
     try {
-      const count = await service.shopping.shop.getShopCount()
+      const count = await service.shopping.shop.getShopCount(params)
       ctx.status = 200
       ctx.body = {
         success: true,
@@ -196,7 +197,7 @@ class ShopController extends Controller {
     }
   }
   async updateShop() {
-    console.log('updateShop')
+    // console.log('updateShop')
     const { ctx, service } = this
     const { name, address, description = '', phone, category, id, latitude, longitude, image_path } = ctx.request.body
     try {

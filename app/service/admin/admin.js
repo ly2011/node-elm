@@ -53,9 +53,13 @@ class AdminService extends Service {
    * @param {Number} offset 偏移量
    * @param {Number} limit 每页显示条数
    */
-  async getAllAdmin(offset = 0, limit = 10) {
+  async getAllAdmin(params = {}, offset = 0, limit = 10) {
+    const query = {};
+    Object.keys(params).forEach(key => {
+      query[key] = new RegExp(params[key], 'i');
+    });
     const allAdmin = this.ctx.model.Admin.Admin
-      .find({}, '-password')
+      .find(query, '-password')
       .sort({ _id: -1 })
       .skip(Number(offset))
       .limit(Number(limit))
@@ -65,9 +69,13 @@ class AdminService extends Service {
 
   /**
    * 获取关键词能搜索到的管理员数量
-   * @param {String} query 搜索关键词
+   * @param {Object} params 搜索条件
    */
-  async getAdminCount(query) {
+  async getAdminCount(params = {}) {
+    const query = {};
+    Object.keys(params).forEach(key => {
+      query[key] = new RegExp(params[key], 'i');
+    });
     const count = this.ctx.model.Admin.Admin.count(query).exec();
     return count;
   }
