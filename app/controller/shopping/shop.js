@@ -1,15 +1,15 @@
-'use strict';
+'use strict'
 
-const Controller = require('egg').Controller;
-const path = require('path');
-const fs = require('fs');
-const uuidv1 = require('uuid/v1');
-const awaitWriteStream = require('await-stream-ready').write;
-const sendToWormhole = require('stream-wormhole');
+const Controller = require('egg').Controller
+const path = require('path')
+const fs = require('fs')
+const uuidv1 = require('uuid/v1')
+const awaitWriteStream = require('await-stream-ready').write
+const sendToWormhole = require('stream-wormhole')
 
 class ShopController extends Controller {
   async addShop() {
-    const { ctx, service } = this;
+    const { ctx, service } = this
     const {
       name,
       address,
@@ -27,47 +27,46 @@ class ShopController extends Controller {
       is_new = false,
       promotion_info = '欢迎光临，用餐高峰请提前下单，谢谢',
       business_license_image = '',
-      catering_service_license_image = '',
-    } = ctx.request.body;
-    console.log('addShop: ', name, category, latitude, longitude);
+      catering_service_license_image = ''
+    } = ctx.request.body
+    console.log('addShop: ', name, category, latitude, longitude)
     try {
       if (!name) {
-        throw new Error('必须填写商店名称');
+        throw new Error('必须填写商店名称')
       } else if (!address) {
-        throw new Error('必须填写商店地址');
+        throw new Error('必须填写商店地址')
       } else if (!phone) {
-        throw new Error('必须填写联系电话');
+        throw new Error('必须填写联系电话')
+      } else if (!latitude || !longitude) {
+        throw new Error('商店位置信息错误')
       } else if (!image_path) {
-        // else if (!latitude || !longitude) {
-        //   throw new Error('商店位置信息错误');
-        // }
-        // throw new Error('必须上传商铺图片');
+        throw new Error('必须上传商铺图片')
       } else if (!category) {
-        throw new Error('必须上传食品种类');
+        throw new Error('必须上传食品种类')
       }
     } catch (err) {
-      console.log('失败： ', err.message);
-      ctx.status = 200;
+      console.log('失败： ', err.message)
+      ctx.status = 200
       ctx.body = {
         success: false,
-        error_msg: err.message,
-      };
-      return;
+        error_msg: err.message
+      }
+      return
     }
     try {
-      const exists = await service.shopping.shop.getShopByName(name);
+      const exists = await service.shopping.shop.getShopByName(name)
       // console.log('exists: ', exists);
       if (exists) {
-        console.log('店铺已存在，请尝试其他店铺名称');
-        ctx.status = 200;
+        console.log('店铺已存在，请尝试其他店铺名称')
+        ctx.status = 200
         ctx.body = {
           success: false,
-          message: '店铺已存在，请尝试其他店铺名称',
-        };
-        return;
+          message: '店铺已存在，请尝试其他店铺名称'
+        }
+        return
         // throw new Error('店铺已存在，请尝试其他店铺名称');
       }
-      const opening_hours = startTime && endTime ? startTime + '/' + endTime : '8:30/20:30';
+      const opening_hours = startTime && endTime ? startTime + '/' + endTime : '8:30/20:30'
       const newShop = {
         name,
         address,
@@ -79,7 +78,7 @@ class ShopController extends Controller {
         latitude,
         longitude,
         // location: [ longitude, latitude ],
-        opening_hours: [ opening_hours ],
+        opening_hours: [opening_hours],
         phone,
         promotion_info,
         rating: (4 + Math.random()).toFixed(1),
@@ -89,13 +88,13 @@ class ShopController extends Controller {
         image_path,
         category,
         piecewise_agent_fee: {
-          tips: '配送费约¥' + float_delivery_fee,
+          tips: '配送费约¥' + float_delivery_fee
         },
         activities: [],
         supports: [],
         license: {
           business_license_image,
-          catering_service_license_image,
+          catering_service_license_image
         },
         identification: {
           company_name: '',
@@ -107,120 +106,120 @@ class ShopController extends Controller {
           licenses_scope: '',
           operation_period: '',
           registered_address: '',
-          registered_number: '',
-        },
-      };
+          registered_number: ''
+        }
+      }
 
       // 保存数据，并增加对应食品种类的数量
       // eslint-disable-next-line
       const shop = await service.shopping.shop.newAndSave(newShop)
-      ctx.status = 200;
+      ctx.status = 200
       ctx.body = {
         success: true,
         data: shop,
-        error_msg: '添加餐厅成功',
-      };
+        error_msg: '添加餐厅成功'
+      }
     } catch (error) {
-      console.log('添加失败：', error);
-      ctx.status = 200;
+      console.log('添加失败：', error)
+      ctx.status = 200
       ctx.body = {
         success: false,
-        error_msg: '添加商铺失败',
-      };
+        error_msg: '添加商铺失败'
+      }
     }
   }
   // 获取餐馆列表
   async getRestaurants() {
     // eslint-disable-next-line
     const { ctx, service } = this
-    const { currentPage = 1, pageSize = 10, name } = ctx.query;
-    const offset = (currentPage - 1) * pageSize;
+    const { currentPage = 1, pageSize = 10, ...restParam } = ctx.query
+    const offset = (currentPage - 1) * pageSize
     try {
-      const shops = await service.shopping.shop.getRestaurants(name, offset, pageSize);
-      ctx.status = 200;
+      const shops = await service.shopping.shop.getRestaurants(restParam, offset, pageSize)
+      ctx.status = 200
       ctx.body = {
         success: true,
         data: shops,
-        error_msg: '获取店铺列表数据成功',
-      };
+        error_msg: '获取店铺列表数据成功'
+      }
     } catch (error) {
-      ctx.status = 200;
+      ctx.status = 200
       ctx.body = {
         success: false,
-        error_msg: '获取店铺列表失败',
-      };
+        error_msg: '获取店铺列表失败'
+      }
     }
   }
   async getRestaurantDetail() {
-    const { ctx, service } = this;
-    const id = ctx.params.id;
+    const { ctx, service } = this
+    const id = ctx.params.id
     if (!id) {
-      ctx.status = 200;
+      ctx.status = 200
       ctx.body = {
         success: false,
-        error_msg: '餐馆ID参数错误',
-      };
-      return;
+        error_msg: '餐馆ID参数错误'
+      }
+      return
     }
     try {
-      const restaurant = await service.shopping.shop.getRestaurantDetail();
-      ctx.status = 200;
+      const restaurant = await service.shopping.shop.getRestaurantDetail()
+      ctx.status = 200
       ctx.body = {
         success: true,
         data: restaurant,
-        error_msg: '获取餐馆详情成功',
-      };
+        error_msg: '获取餐馆详情成功'
+      }
     } catch (error) {
-      ctx.status = 200;
+      ctx.status = 200
       ctx.body = {
         success: false,
-        error_msg: '获取餐馆详情失败',
-      };
+        error_msg: '获取餐馆详情失败'
+      }
     }
   }
   async getShopCount() {
-    const { ctx, service } = this;
+    const { ctx, service } = this
     try {
-      const count = await service.shopping.shop.getShopCount();
-      ctx.status = 200;
+      const count = await service.shopping.shop.getShopCount()
+      ctx.status = 200
       ctx.body = {
         success: true,
         data: count,
-        error_msg: '获取餐馆数量成功',
-      };
+        error_msg: '获取餐馆数量成功'
+      }
     } catch (error) {
-      ctx.status = 200;
+      ctx.status = 200
       ctx.body = {
         success: false,
-        error_msg: '获取餐馆数量失败',
-      };
+        error_msg: '获取餐馆数量失败'
+      }
     }
   }
   async updateShop() {
-    console.log('updateShop');
-    const { ctx, service } = this;
-    const { name, address, description = '', phone, category, id, latitude, longitude, image_path } = ctx.request.body;
+    console.log('updateShop')
+    const { ctx, service } = this
+    const { name, address, description = '', phone, category, id, latitude, longitude, image_path } = ctx.request.body
     try {
       if (!name) {
-        throw new Error('餐馆名称错误');
+        throw new Error('餐馆名称错误')
       } else if (!address) {
-        throw new Error('餐馆地址错误');
+        throw new Error('餐馆地址错误')
       } else if (!phone) {
-        throw new Error('餐馆联系电话错误');
+        throw new Error('餐馆联系电话错误')
       } else if (!image_path) {
-        throw new Error('餐馆图片地址错误');
+        throw new Error('餐馆图片地址错误')
       } else if (!category) {
-        throw new Error('餐馆分类错误');
+        throw new Error('餐馆分类错误')
       } else if (!id) {
-        throw new Error('餐馆ID错误');
+        throw new Error('餐馆ID错误')
       }
     } catch (err) {
-      ctx.status = 200;
+      ctx.status = 200
       ctx.body = {
         success: false,
-        error_msg: err.message,
-      };
-      return;
+        error_msg: err.message
+      }
+      return
     }
     const newData = {
       name,
@@ -228,53 +227,53 @@ class ShopController extends Controller {
       description,
       phone,
       category,
-      image_path,
-    };
+      image_path
+    }
     if (latitude && longitude) {
-      newData.latitude = latitude;
-      newData.longitude = longitude;
+      newData.latitude = latitude
+      newData.longitude = longitude
     }
     try {
-      await service.shopping.shop.updateShop(id, newData);
-      ctx.status = 200;
+      await service.shopping.shop.updateShop(id, newData)
+      ctx.status = 200
       ctx.body = {
         success: true,
-        error_msg: '修改餐馆信息成功',
-      };
+        error_msg: '修改餐馆信息成功'
+      }
     } catch (error) {
-      console.log('修改餐馆信息失败: ', error);
-      ctx.status = 200;
+      console.log('修改餐馆信息失败: ', error)
+      ctx.status = 200
       ctx.body = {
         success: false,
-        error_msg: '修改餐馆信息失败',
-      };
+        error_msg: '修改餐馆信息失败'
+      }
     }
   }
 
   async deleteRestaurant() {
-    const { ctx, service } = this;
-    const { id } = ctx.params;
+    const { ctx, service } = this
+    const { id } = ctx.params
     if (!id) {
-      ctx.status = 200;
+      ctx.status = 200
       ctx.body = {
         success: false,
-        error_msg: '餐馆ID参数错误',
-      };
-      return;
+        error_msg: '餐馆ID参数错误'
+      }
+      return
     }
     try {
-      await service.shopping.shop.deleteShop(id);
-      ctx.status = 200;
+      await service.shopping.shop.deleteShop(id)
+      ctx.status = 200
       ctx.body = {
         success: true,
-        error_msg: '删除餐馆成功',
-      };
+        error_msg: '删除餐馆成功'
+      }
     } catch (error) {
-      ctx.status = 200;
+      ctx.status = 200
       ctx.body = {
         success: false,
-        error_msg: '删除餐馆失败',
-      };
+        error_msg: '删除餐馆失败'
+      }
     }
   }
 
@@ -282,38 +281,38 @@ class ShopController extends Controller {
    * 上传文件
    */
   async upload() {
-    const { ctx, config, service } = this;
-    const uid = uuidv1();
-    const stream = await ctx.getFileStream();
-    const filename = uid + path.extname(stream.filename).toLowerCase();
+    const { ctx, config, service } = this
+    const uid = uuidv1()
+    const stream = await ctx.getFileStream()
+    const filename = uid + path.extname(stream.filename).toLowerCase()
 
     // 如果有七牛云的配置，优先上传七牛云
     if (config.qn_access && config.qn_access.secretKey) {
       try {
-        const result = await service.shopping.shop.qnUpload(stream, filename);
+        const result = await service.shopping.shop.qnUpload(stream, filename)
         ctx.body = {
           success: true,
-          url: config.qn_access.origin + '/' + result.key,
-        };
+          url: config.qn_access.origin + '/' + result.key
+        }
       } catch (err) {
-        await sendToWormhole(stream);
-        throw err;
+        await sendToWormhole(stream)
+        throw err
       }
     } else {
-      const target = path.join(config.upload.path, filename);
-      const writeStream = fs.createWriteStream(target);
+      const target = path.join(config.upload.path, filename)
+      const writeStream = fs.createWriteStream(target)
       try {
-        await awaitWriteStream(stream.pipe(writeStream));
+        await awaitWriteStream(stream.pipe(writeStream))
         ctx.body = {
           success: true,
-          url: config.upload.url + filename,
-        };
+          url: config.upload.url + filename
+        }
       } catch (err) {
-        await sendToWormhole(stream);
-        throw err;
+        await sendToWormhole(stream)
+        throw err
       }
     }
   }
 }
 
-module.exports = ShopController;
+module.exports = ShopController

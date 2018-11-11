@@ -11,17 +11,14 @@ class AddressService extends Service {
     console.log('tencentkey, tencentkey2, tencentkey3', this.config.tencent_map);
     return new Promise(async (resolve, reject) => {
       let ip = ctx.request.ip || '';
-      console.log('ip: ', ip);
       if (process.env.NODE_ENV == 'development') {
         ip = '218.13.14.202';
       }
       try {
-        console.log('3333');
         let result = await request('http://apis.map.qq.com/ws/location/v1/ip', {
           ip,
           key: tencentkey,
         });
-        console.log('4444');
         if (result.status != 0) {
           result = await request('http://apis.map.qq.com/ws/location/v1/ip', {
             ip,
