@@ -21,6 +21,22 @@ class CategoryService extends Service {
     });
     return categoryName;
   }
+  /**
+   * 删除食品分类
+   * @param {String} id
+   */
+  async deleteCategory(id) {
+    const query = {
+      _id: id,
+    };
+    return this.ctx.model.Shopping.Category.remove(query);
+  }
+  /**
+   * 批量删除食品分类
+   */
+  async deleteAllCategory() {
+    return this.ctx.model.Shopping.Category.remove();
+  }
 }
 
 module.exports = CategoryService;

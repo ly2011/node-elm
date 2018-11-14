@@ -2,9 +2,10 @@
 
 const crypto = require('crypto')
 const dayjs = require('dayjs')
-const Controller = require('egg').Controller
+// const Controller = require('egg').Controller
+const BaseController = require('../../core/base-controller')
 
-class AdminController extends Controller {
+class AdminController extends BaseController {
   async login() {
     const { ctx } = this
     const createRule = {
@@ -35,7 +36,7 @@ class AdminController extends Controller {
     const newpassword = this._encryption(password)
     try {
       const admin = await ctx.service.admin.admin.getAdminByName(user_name)
-      console.log('admin: ', admin)
+      // console.log('admin: ', admin)
       if (!admin) {
         // const adminTip = status === 1 ? '管理员' : '超级管理员';
         // const newAdmin = {
@@ -64,7 +65,7 @@ class AdminController extends Controller {
           error_msg: '该用户已存在，密码输入错误'
         }
       } else {
-        ctx.session.admin_id = admin._id
+        ctx.session.admin_id = admin.id
         ctx.status = 200
         ctx.body = {
           success: true,
@@ -115,11 +116,13 @@ class AdminController extends Controller {
         }
       } else {
         const adminTip = status === 1 ? '管理员' : '超级管理员'
+        const admin_id = await this.getId('admin_id')
         const newpassword = this._encryption(password)
         const newAdmin = {
           user_name,
           password: newpassword,
           create_time: dayjs().format('YYYY-MM-DD'),
+          id: admin_id,
           admin: adminTip,
           status
         }

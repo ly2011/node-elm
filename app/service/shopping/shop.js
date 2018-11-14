@@ -38,7 +38,7 @@ class ShopService extends Service {
     const shops = this.ctx.model.Shopping.Shop
       // .find(query, '_id name address description phone rating status category image_path')
       .find(query)
-      .sort({ _id: -1 })
+      .sort({ id: -1 })
       .skip(Number(offset))
       .limit(Number(limit))
       .exec();
@@ -50,7 +50,7 @@ class ShopService extends Service {
    */
   async getRestaurantDetail(id) {
     const query = {
-      _id: id,
+      id,
     };
     const info = this.ctx.model.Shopping.Shop.findOne(query).exec();
     return info;
@@ -75,15 +75,15 @@ class ShopService extends Service {
    * @param {Object} params 餐馆参数
    */
   async updateShop(id, params = {}) {
-    return this.ctx.model.Shopping.Shop.findOneAndUpdate({ _id: id }, { $set: params });
+    return this.ctx.model.Shopping.Shop.findOneAndUpdate({ id }, { $set: params });
   }
   /**
-   *
+   * 删除店铺
    * @param {String} id
    */
   async deleteShop(id) {
     const query = {
-      _id: id,
+      id,
     };
     return this.ctx.model.Shopping.Shop.remove(query);
   }

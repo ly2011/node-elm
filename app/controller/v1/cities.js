@@ -1,3 +1,7 @@
+/**
+ * 暂已废弃
+ */
+
 'use strict';
 
 const Controller = require('egg').Controller;

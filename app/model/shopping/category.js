@@ -1,3 +1,6 @@
+/**
+ * 店铺分类
+ */
 'use strict';
 
 const categoryData = require('../../initData/shop-category');
@@ -5,7 +8,6 @@ const categoryData = require('../../initData/shop-category');
 module.exports = app => {
   const mongoose = app.mongoose;
   const Schema = mongoose.Schema;
-  const ObjectId = Schema.ObjectId;
 
   const categorySchema = new Schema({
     count: Number,
@@ -16,8 +18,8 @@ module.exports = app => {
     name: String,
     sub_categories: [
       {
+        id: Number,
         count: Number,
-        _id: ObjectId,
         image_url: String,
         level: Number,
         name: String,

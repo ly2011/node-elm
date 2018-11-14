@@ -1,15 +1,28 @@
 'use strict'
 
-const Controller = require('egg').Controller
+// const Controller = require('egg').Controller
+const BaseController = require('../../core/base-controller')
 const path = require('path')
 const fs = require('fs')
 const uuidv1 = require('uuid/v1')
 const awaitWriteStream = require('await-stream-ready').write
 const sendToWormhole = require('stream-wormhole')
 
-class ShopController extends Controller {
+class ShopController extends BaseController {
   async addShop() {
     const { ctx, service } = this
+    let restaurant_id
+    try {
+      restaurant_id = await this.getId('restaurant_id')
+    } catch (err) {
+      console.log('获取商店id失败')
+      ctx.body = {
+        success: false,
+        message: '获取数据失败'
+      }
+      return
+    }
+
     const {
       name,
       address,
@@ -27,7 +40,12 @@ class ShopController extends Controller {
       is_new = false,
       promotion_info = '欢迎光临，用餐高峰请提前下单，谢谢',
       business_license_image = '',
-      catering_service_license_image = ''
+      catering_service_license_image = '',
+      delivery_mode,
+      activities = [],
+      bao,
+      zhun,
+      piao
     } = ctx.request.body
     // console.log('addShop: ', name, category, latitude, longitude)
     try {
@@ -73,6 +91,7 @@ class ShopController extends Controller {
         description,
         float_delivery_fee,
         float_minimum_order_amount,
+        id: restaurant_id,
         is_premium,
         is_new,
         latitude,
@@ -110,14 +129,81 @@ class ShopController extends Controller {
         }
       }
 
+      //配送方式
+      if (delivery_mode) {
+        Object.assign(newShop, {
+          delivery_mode: {
+            color: '57A9FF',
+            id: 1,
+            is_solid: true,
+            text: '蜂鸟专送'
+          }
+        })
+      }
+      //商店支持的活动
+      activities.forEach((item, index) => {
+        switch (item.icon_name) {
+          case '减':
+            item.icon_color = 'f07373'
+            item.id = index + 1
+            break
+          case '特':
+            item.icon_color = 'EDC123'
+            item.id = index + 1
+            break
+          case '新':
+            item.icon_color = '70bc46'
+            item.id = index + 1
+            break
+          case '领':
+            item.icon_color = 'E3EE0D'
+            item.id = index + 1
+            break
+        }
+        newShop.activities.push(item)
+      })
+      if (bao) {
+        newShop.supports.push({
+          description: '已加入“外卖保”计划，食品安全有保障',
+          icon_color: '999999',
+          icon_name: '保',
+          id: 7,
+          name: '外卖保'
+        })
+      }
+      if (zhun) {
+        newShop.supports.push({
+          description: '准时必达，超时秒赔',
+          icon_color: '57A9FF',
+          icon_name: '准',
+          id: 9,
+          name: '准时达'
+        })
+      }
+      if (piao) {
+        newShop.supports.push({
+          description: '该商家支持开发票，请在下单时填写好发票抬头',
+          icon_color: '999999',
+          icon_name: '票',
+          id: 4,
+          name: '开发票'
+        })
+      }
       // 保存数据，并增加对应食品种类的数量
-      // eslint-disable-next-line
+      // 初始化店铺数据
       const shop = await service.shopping.shop.newAndSave(newShop)
+
+      // 添加商铺分类
+      await ctx.model.Shopping.Category.addCategory(category)
+      // await ctx.model.UGC.Rating.initData(restaurant_id)
+      // 初始化食品分类数据
+      await service.shopping.food.initData(restaurant_id)
+
       ctx.status = 200
       ctx.body = {
         success: true,
         data: shop,
-        error_msg: '添加餐厅成功'
+        error_msg: '添加商铺成功'
       }
     } catch (error) {
       console.log('添加失败：', error)
@@ -162,7 +248,7 @@ class ShopController extends Controller {
       return
     }
     try {
-      const restaurant = await service.shopping.shop.getRestaurantDetail()
+      const restaurant = await service.shopping.shop.getRestaurantDetail(id)
       ctx.status = 200
       ctx.body = {
         success: true,

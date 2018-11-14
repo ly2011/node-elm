@@ -17,7 +17,7 @@ class CategoryController extends Controller {
         error_msg: '获取餐馆分类成功',
       };
     } catch (error) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: true,
         error_msg: '获取餐馆分类失败',
@@ -31,10 +31,10 @@ class CategoryController extends Controller {
     const { ctx, service } = this;
     const { type } = ctx.params;
     if (!type) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
-        error_msg: '餐馆分类错误',
+        error_msg: '食品种类错误',
       };
       return;
     }
@@ -43,13 +43,13 @@ class CategoryController extends Controller {
       ctx.status = 200;
       ctx.body = {
         success: true,
-        error_msg: '增加餐馆分类成功',
+        error_msg: '增加食品种类成功',
       };
     } catch (error) {
       ctx.status = 200;
       ctx.body = {
         success: false,
-        error_msg: '增加餐馆分类失败',
+        error_msg: '增加食品种类失败',
       };
     }
   }
@@ -60,7 +60,7 @@ class CategoryController extends Controller {
     const { ctx, service } = this;
     const { id } = ctx.params;
     if (!id) {
-      ctx.status = 401;
+      ctx.status = 200;
       ctx.body = {
         success: false,
         error_msg: '餐馆ID参数错误',
@@ -79,6 +79,26 @@ class CategoryController extends Controller {
       ctx.body = {
         success: false,
         error_msg: '获取当前店铺食品种类失败',
+      };
+    }
+  }
+  /**
+   * 清空食品分类
+   */
+  async emptyCategory() {
+    const { ctx, service } = this;
+    try {
+      await service.shopping.category.deleteAllCategory();
+      ctx.status = 200;
+      ctx.body = {
+        success: true,
+        error_msg: '清空食品分类成功',
+      };
+    } catch (error) {
+      ctx.status = 200;
+      ctx.body = {
+        success: false,
+        error_msg: '清空食品分类失败',
       };
     }
   }

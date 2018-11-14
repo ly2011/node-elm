@@ -22,7 +22,7 @@ class AdminService extends Service {
    */
   async getAdminById(id) {
     const query = {
-      _id: id,
+      id,
     };
     return this.ctx.model.Admin.Admin.findOne(query).exec();
   }
@@ -33,7 +33,7 @@ class AdminService extends Service {
    */
   async getUsersByIds(ids = []) {
     const query = {
-      _id: { $in: ids },
+      id: { $in: ids },
     };
     return this.ctx.model.Admin.Admin.find(query).exec();
   }
@@ -60,7 +60,7 @@ class AdminService extends Service {
     });
     const allAdmin = this.ctx.model.Admin.Admin
       .find(query, '-password')
-      .sort({ _id: -1 })
+      .sort({ id: -1 })
       .skip(Number(offset))
       .limit(Number(limit))
       .exec();
@@ -86,7 +86,7 @@ class AdminService extends Service {
    */
   async getAdminInfo(id) {
     const query = {
-      _id: id,
+      id,
     };
     const info = this.ctx.model.Admin.Admin.findOne(query, '-_id -__v -password').exec();
     return info;
