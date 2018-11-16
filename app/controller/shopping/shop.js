@@ -216,7 +216,6 @@ class ShopController extends BaseController {
   }
   // 获取餐馆列表
   async getRestaurants() {
-    // eslint-disable-next-line
     const { ctx, service } = this
     const { currentPage = 1, pageSize = 10, ...restParam } = ctx.query
     const offset = (currentPage - 1) * pageSize

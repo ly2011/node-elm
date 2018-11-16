@@ -47,7 +47,7 @@ class FoodService extends Service {
     const query = {
       restaurant_id
     }
-    const info = ctx.model.Shopping.FoodMenu.find(query).exec()
+    const info = ctx.model.Shopping.FoodMenu.find(query)
     return info
   }
 
@@ -56,7 +56,7 @@ class FoodService extends Service {
     const query = {
       id
     }
-    const info = ctx.model.Shopping.FoodMenu.findOne(query).exec()
+    const info = ctx.model.Shopping.FoodMenu.findOne(query)
     return info
   }
 
@@ -77,7 +77,59 @@ class FoodService extends Service {
     return shop.save()
   }
 
-  async getFoods() {}
+  // 获取食品列表
+  async getFoods(params = {}, offset = 0, limit = 10) {
+    const query = {}
+    Object.keys(params).forEach(key => {
+      query[key] = new RegExp(params[key], 'i')
+    })
+    const foods = this.ctx.model.Shopping.Food
+      .find(query)
+      .lean() // 必须添加这个，才能对返回后的值修改（https://blog.csdn.net/ei__nino/article/details/41901095）
+      .sort({ id: -1 })
+      .skip(Number(offset))
+      .limit(Number(limit))
+      .exec()
+    return foods
+  }
+  async updateFood(id, params = {}) {
+    return this.ctx.model.Shopping.Food.findOneAndUpdate({ id }, { $set: params })
+  }
+  /**
+   * 获取食品
+   * @param {String} id 食品ID
+   */
+  async getFoodDetail(id) {
+    const query = {
+      id
+    }
+    const info = this.ctx.model.Shopping.Food.findOne(query).exec()
+    return info
+  }
+  /**
+   * 获取食品数量
+   * @return {Promise}
+   */
+  async getFoodsCount(params = {}) {
+    const query = {}
+    Object.keys(params).forEach(key => {
+      query[key] = new RegExp(params[key], 'i')
+    })
+    return this.ctx.model.Shopping.Food
+      .find(query)
+      .count()
+      .exec()
+  }
+  /**
+   * 删除食品
+   * @param {String} id
+   */
+  async deleteFood(id) {
+    const query = {
+      id
+    }
+    return this.ctx.model.Shopping.Food.remove(query)
+  }
 }
 
 module.exports = FoodService

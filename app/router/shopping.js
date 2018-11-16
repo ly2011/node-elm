@@ -27,11 +27,12 @@ module.exports = app => {
   // 食品
   apiRouter.get('/getFoodCategory', food.getCategory);
   apiRouter.post('/addFoodCategory', food.addCategory);
-  // apiRouter.get('/getFoodMenus, Food.getMenu)
-  // apiRouter.get('/getFoodMenu/:category_id', Food.getMenuDetail)
-  // apiRouter.get('/getFoods', Food.gteFoods)
-  // apiRouter.get('/getFoodsCount', Food.getFoodsCount)
+  // apiRouter.get('/getFoodMenus, food.getMenu)
+  // apiRouter.get('/getFoodMenu/:category_id', food.getMenuDetail)
+  apiRouter.get('/getFoods', food.getFoods);
+  apiRouter.get('/getFoodsCount', food.getFoodsCount);
+  apiRouter.get('/getFoodById/:id', food.getFoodDetail);
   apiRouter.post('/addFood', food.addFood);
-  // apiRouter.post('/updateFood', Food.updateFood)
-  // apiRouter.get('/deleteFood', Foo.deleteFood)
+  apiRouter.post('/updateFood', food.updateFood);
+  apiRouter.get('/deleteFood', food.deleteFood);
 };

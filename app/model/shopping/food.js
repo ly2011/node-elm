@@ -63,6 +63,8 @@ module.exports = app => {
   });
 
   foodSchema.index({ item_id: 1 });
+  // foodSchema.set('toJSON', { getters: true, virtuals: true });
+  // foodSchema.set('toObject', { getters: true, virtuals: true }); // 普通+虚拟
 
   // const menuSchema = new Schema({
   //   description: String,

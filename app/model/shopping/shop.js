@@ -80,5 +80,7 @@ module.exports = app => {
     ],
   });
   shopSchema.index({ id: 1 }); // primary_key 主键
+  // shopSchema.set('toJSON', { getters: true, virtuals: true });
+  // shopSchema.set('toObject', { getters: true, virtuals: true }); // 普通+虚拟
   return mongoose.model('Shop', shopSchema);
 };
