@@ -206,6 +206,9 @@ class FoodController extends BaseController {
   async getSpecfoods(fields, item_id) {
     let specfoods = [],
       specifications = []
+    if (!fields.specs) {
+      fields.specs = []
+    }
     if (fields.specs.length < 2) {
       let food_id, sku_id
       try {
@@ -300,7 +303,7 @@ class FoodController extends BaseController {
           const tmpShop = await shopService.getRestaurantDetail(food.restaurant_id)
           food.restaurant_name = tmpShop.name
           food.restaurant_address = tmpShop.address
-          console.log('2222', food.name)
+          // console.log('2222', food.name)
           return food
         })
       )
@@ -393,11 +396,11 @@ class FoodController extends BaseController {
           specfoods,
           specifications
         }
-        const food = await service.shopping.food.update(item_id, newData)
+        const food = await service.shopping.food.updateFood(item_id, newData)
         const foodMenu = await service.shopping.food.getCategoryById(category_id)
         const targetFoodMenu = await service.shopping.food.getCategoryById(new_category_id)
 
-        let subFood = foodMenu.foods.id(food._id)
+        let subFood = foodMenu.foods.find(food._id)
         subFood.set(newData)
         targetFoodMenu.foods.push(subFood)
         await service.shopping.food.updateCategory(new_category_id, targetFoodMenu)
@@ -411,7 +414,7 @@ class FoodController extends BaseController {
           specfoods,
           specifications
         }
-        const food = await service.shopping.food.update(item_id, newData)
+        const food = await service.shopping.food.updateFood(item_id, newData)
         const foodMenu = await service.shopping.food.getCategoryById(category_id)
         let subFood = foodMenu.foods.id(food._id)
         subFood.set(newData)

@@ -93,7 +93,7 @@ class FoodService extends Service {
     return foods
   }
   async updateFood(id, params = {}) {
-    return this.ctx.model.Shopping.Food.findOneAndUpdate({ id }, { $set: params })
+    return this.ctx.model.Shopping.Food.findOneAndUpdate({ item_id: id }, { $set: params })
   }
   /**
    * 获取食品
@@ -101,7 +101,7 @@ class FoodService extends Service {
    */
   async getFoodDetail(id) {
     const query = {
-      id
+      item_id: id
     }
     const info = this.ctx.model.Shopping.Food.findOne(query).exec()
     return info
@@ -126,7 +126,7 @@ class FoodService extends Service {
    */
   async deleteFood(id) {
     const query = {
-      id
+      item_id: id
     }
     return this.ctx.model.Shopping.Food.remove(query)
   }
