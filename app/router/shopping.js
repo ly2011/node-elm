@@ -31,7 +31,7 @@ module.exports = app => {
   // apiRouter.get('/getFoodMenu/:category_id', Food.getMenuDetail)
   // apiRouter.get('/getFoods', Food.gteFoods)
   // apiRouter.get('/getFoodsCount', Food.getFoodsCount)
-  // apiRouter.post('/addFood', Food.addFood)
+  apiRouter.post('/addFood', food.addFood);
   // apiRouter.post('/updateFood', Food.updateFood)
   // apiRouter.get('/deleteFood', Foo.deleteFood)
 };

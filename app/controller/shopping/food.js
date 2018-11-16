@@ -46,7 +46,7 @@ class FoodController extends BaseController {
     try {
       await service.shopping.food.addCategory(foodObj);
       ctx.body = {
-        success: false,
+        success: true,
         data: null,
         message: '添加食品种类成功',
       };
@@ -87,11 +87,11 @@ class FoodController extends BaseController {
         throw new Error('必须填写食品名称');
       } else if (!image_path) {
         throw new Error('必须上传食品图片');
-      } else if (specs.length) {
+      } else if (!specs.length) {
         throw new Error('至少填写一种规格');
       } else if (!category_id) {
         throw new Error('食品类型ID错误');
-      } else if (restaurant_id) {
+      } else if (!restaurant_id) {
         throw new Error('餐馆ID错误');
       }
     } catch (err) {
@@ -178,13 +178,18 @@ class FoodController extends BaseController {
       return;
     }
     try {
+      console.log('addFood: ', category);
       // const { Food } = ctx.model.Shopping.Food;
       // const foodEntity = await Food.create(newFood);
       // category.foods.push(foodEntity);
       // category.markModified('foods');
       // await category.save();
+
+      // const food = await service.shopping.food.addFood(newFood)
+
       ctx.body = {
         success: true,
+        data: {},
         message: '添加食品成功',
       };
     } catch (err) {
