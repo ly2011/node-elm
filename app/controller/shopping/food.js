@@ -44,10 +44,10 @@ class FoodController extends BaseController {
       // foods: [],
     };
     try {
-      await service.shopping.food.addCategory(foodObj);
+      const category = await service.shopping.food.addCategory(foodObj);
       ctx.body = {
         success: true,
-        data: null,
+        data: category,
         message: '添加食品种类成功',
       };
     } catch (e) {
@@ -185,11 +185,14 @@ class FoodController extends BaseController {
       // category.markModified('foods');
       // await category.save();
 
-      // const food = await service.shopping.food.addFood(newFood)
+      const food = await service.shopping.food.addFood(newFood);
+      const food_id = food._id;
+      category.foods.push(food_id);
+      service.shopping.food.updateCategory(category_id, category);
 
       ctx.body = {
         success: true,
-        data: {},
+        data: food,
         message: '添加食品成功',
       };
     } catch (err) {

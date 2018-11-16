@@ -66,6 +66,11 @@ class FoodService extends Service {
     return newFood.save()
   }
 
+  // 更新食品种类
+  async updateCategory(id, params = {}) {
+    return this.ctx.model.Shopping.FoodMenu.findOneAndUpdate({ id }, { $set: params })
+  }
+
   async addFood(params = {}) {
     const { ctx } = this
     const shop = new ctx.model.Shopping.Food(params)

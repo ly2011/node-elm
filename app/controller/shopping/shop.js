@@ -321,10 +321,11 @@ class ShopController extends BaseController {
       newData.longitude = longitude
     }
     try {
-      await service.shopping.shop.updateShop(id, newData)
+      const shop = await service.shopping.shop.updateShop(id, newData)
       ctx.status = 200
       ctx.body = {
         success: true,
+        data: shop,
         error_msg: '修改餐馆信息成功'
       }
     } catch (error) {
